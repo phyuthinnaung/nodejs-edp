@@ -33,21 +33,15 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Setup SSH Key
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          ssh-keyscan 159.223.49.147 >> ~/.ssh/known_hosts
-          chmod 700 ~/.ssh
-          echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/github-actions-key
-          chmod 600 ~/.ssh/github-actions-key
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.DO_SSH_PRIVATE_KEY }} # The secret with your private SSH key
 
       - name: Deploy to DigitalOcean Droplet
         run: |
-          ssh root@159.223.49.147 << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@167.71.202.184 << 'EOF'
             cd Flymya/nodejs-edp
-            git pull origin main
-            npm install --production
-            npm run build
-            pm2 restart app # Modify based on your setup
+            git pull origin main 
+            npm install
           EOF
