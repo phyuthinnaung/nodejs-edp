@@ -34,9 +34,11 @@ jobs:
         run: npm test
 
       - name: Setup SSH Key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/github-actions-key
+          chmod 600 ~/.ssh/github-actions-key
+          ssh-keyscan -H 159.223.49.147 >> ~/.ssh/known_hosts
 
       - name: Deploy to DigitalOcean Droplet
         run: |
