@@ -36,9 +36,11 @@ jobs:
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-keyscan 159.223.49.147 >> ~/.ssh/known_hosts
+          chmod 700 ~/.ssh
           echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/github-actions-key
           chmod 600 ~/.ssh/github-actions-key
-          ssh-keyscan -H 159.223.49.147 >> ~/.ssh/known_hosts
 
       - name: Deploy to DigitalOcean Droplet
         run: |
